@@ -31,7 +31,9 @@ end
 
 function love.draw()
     currentState:draw()
+    love.graphics.setColor(0.4,0.4,0.4)
     love.graphics.print('X',750,50)
+    love.graphics.setColor(1,1,1)
 end
 
 function love.keypressed(key)
@@ -64,3 +66,6 @@ end
 --     love.textinput = nil
 --     love.focus = nil
 -- end
+
+print(collectgarbage("count"))  -- Prints memory usage in KB
+collectgarbage("collect")       -- Manually triggers garbage collection

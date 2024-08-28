@@ -60,4 +60,6 @@ function menu:keypressed(key)
     end
 end
 
+print(collectgarbage("count"))
+collectgarbage("collect")
 return menu
