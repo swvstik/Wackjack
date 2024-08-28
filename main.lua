@@ -1,7 +1,6 @@
 -- state management
 menu = require("states.menu")
 options = require("states.options")
-cards = require("mech.cards")
 game = require("states.game")
 currentState = menu
 
