@@ -16,6 +16,8 @@ local function getCardVal(cardRank)
     end
 end
 
+local faceDownCard = love.graphics.newImage('assets/cards/facedown.png')
+
 -- Create the cardset with card descriptions and values
 local cardset = {}
 for i = 1, #rank do
