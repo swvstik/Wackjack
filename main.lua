@@ -31,11 +31,26 @@ end
 
 function love.draw()
     currentState:draw()
+    love.graphics.print('X',750,50)
 end
 
 function love.keypressed(key)
     if currentState.keypressed then
         currentState:keypressed(key)
+    end
+end
+
+function love.mousepressed(mouseX, mouseY, button, istouch, presses)
+    if button == 1 then  -- Check for left mouse button click
+        -- Check if the click is within the bounds of the "X"
+        if mouseX >= 750 - 15 and mouseX <= 750 + 15 and mouseY >= 50 - 15 and mouseY <= 50 + 15 then
+            love.event.quit()
+        end
+    end
+
+    -- Call the current state's mousepressed function if it exists
+    if currentState.mousepressed then
+        currentState:mousepressed(mouseX, mouseY, button, istouch, presses)
     end
 end
 
