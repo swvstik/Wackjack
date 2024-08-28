@@ -8,6 +8,4 @@ function love.conf(t)
     t.title = 'wackjack'
     t.version = '11.0'
     t.console=true
-    print(collectgarbage("count"))  -- Prints memory usage in KB
-collectgarbage("collect")
 end

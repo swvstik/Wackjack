@@ -8,7 +8,6 @@ currentState = menu
 sfxState, bgmState = 'on', 'on'
 sfxVol, bgmVol = 1, 1
 
-
 function love.load()
     if bgmState then
         bgm = love.audio.newSource('assets/bgm/bgm.wav','stream')
@@ -27,12 +26,13 @@ end
 
 function love.update(dt)
     currentState:update(dt)
+    collectgarbage("collect")
 end
 
 function love.draw()
     currentState:draw()
     love.graphics.setColor(0.4,0.4,0.4)
-    love.graphics.print('X',750,50)
+    love.graphics.print('X',750,30)
     love.graphics.setColor(1,1,1)
 end
 
@@ -43,9 +43,8 @@ function love.keypressed(key)
 end
 
 function love.mousepressed(mouseX, mouseY, button, istouch, presses)
-    if button == 1 then  -- Check for left mouse button click
-        -- Check if the click is within the bounds of the "X"
-        if mouseX >= 750 - 15 and mouseX <= 750 + 15 and mouseY >= 50 - 15 and mouseY <= 50 + 15 then
+    if button == 1 then
+        if mouseX >= 750 - 15 and mouseX <= 750 + 15 and mouseY >= 30 - 15 and mouseY <= 30 + 15 then
             love.event.quit()
         end
     end
@@ -57,7 +56,6 @@ function love.mousepressed(mouseX, mouseY, button, istouch, presses)
 end
 
 -- function clearCallback()
---     love.load = nil
 --     love.update = nil
 --     love.draw = nil
 --     love.keypressed = nil
@@ -67,5 +65,5 @@ end
 --     love.focus = nil
 -- end
 
-print(collectgarbage("count"))  -- Prints memory usage in KB
-collectgarbage("collect")       -- Manually triggers garbage collection
+print(collectgarbage("count"))
+collectgarbage("collect")

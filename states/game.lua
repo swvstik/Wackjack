@@ -1,12 +1,13 @@
-math.randomseed(os.time())  -- Seed the random number generator
+math.randomseed(os.time())
 
 local game = {}
 
-local rank = {"ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"}
+local ranks = {"ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"}
 local suits = {"hearts", "diamonds", "clubs", "spades"}
 
--- Function to get the value of a card based on its rank
-local function getCardVal(cardRank)
+local faceDownCard = love.graphics.newImage('assets/cards/facedown.png')
+
+local function getCardValue(cardRank)
     if cardRank == "ace" then
         return 11
     elseif cardRank == "jack" or cardRank == "queen" or cardRank == "king" then
@@ -16,93 +17,142 @@ local function getCardVal(cardRank)
     end
 end
 
-local faceDownCard = love.graphics.newImage('assets/cards/facedown.png')
+local function getRandomRotation()
+    return math.random(-15, 15) / 100
+end
 
--- Create the cardset with card descriptions and values
-local cardset = {}
-for i = 1, #rank do
-    for j = 1, #suits do
-        local cardRank = rank[i]
-        local cardName = cardRank .. "_of_" .. suits[j]
-        local cardVal = getCardVal(cardRank)
-        table.insert(cardset, {cardName, cardVal})
+local function createDeck()
+    local deck = {}
+    for i = 1, #ranks do
+        for j = 1, #suits do
+            local cardRank = ranks[i]
+            local cardName = cardRank .. "_of_" .. suits[j]
+            local cardValue = getCardValue(cardRank)
+            table.insert(deck, {name = cardName, value = cardValue, rotation = getRandomRotation()})
+        end
+    end
+    return deck
+end
+
+local function pickRandomCard(deck)
+    return table.remove(deck, math.random(#deck))
+end
+
+local function calculateHandValue(hand)
+    local value = 0
+    local aces = 0
+    for _, card in ipairs(hand) do
+        value = value + card.value
+        if card.value == 11 then aces = aces + 1 end
+    end
+    while value > 21 and aces > 0 do
+        value = value - 10
+        aces = aces - 1
+    end
+    return value
+end
+
+local function dealInitialCards()
+    dealerHand = {pickRandomCard(deck), pickRandomCard(deck)}
+    playerHand = {pickRandomCard(deck), pickRandomCard(deck)}
+    dealerValue = dealerHand[2].value
+    playerValue = calculateHandValue(playerHand)
+end
+
+local function dealerPlay()
+    dealerFaceDown = false
+    dealerValue = calculateHandValue(dealerHand)
+    while dealerValue < 17 do
+        table.insert(dealerHand, pickRandomCard(deck))
+        dealerValue = calculateHandValue(dealerHand)
+    end
+    if dealerValue > 21 or dealerValue < playerValue then
+        gameResult = "Player Wins!"
+    elseif dealerValue > playerValue then
+        gameResult = "Dealer Wins!"
+    else
+        gameResult = "Draw!"
     end
 end
 
-
-for _, card in ipairs(cardset) do
-    print(card[1], card[2])
-end
-
-local function pickRandom(cardset)
-    return cardset[math.random(#cardset)]
-end
-
-local dHand = {}
-local pHand = {}
-local rddist = 125
-local dealerVal = 0
-local playerVal = 0
-
-local function updatePlayerVal()
-    playerVal = 0
-    for _, card in ipairs(pHand) do
-        playerVal = playerVal + card.value
+local function checkPlayerStatus()
+    if playerValue > 21 then
+        gameResult = "Player Busts! Dealer Wins!"
+        playerStand = true
+    elseif playerValue == 21 then
+        gameResult = "Blackjack! Player Wins!"
+        playerStand = true
     end
 end
 
+local actionLog = ''
 
-local function dhit()
-    rddist = rddist + 50
-    local pickedCard = pickRandom(cardset)
-    table.insert(pHand, {card = pickedCard[1], value = pickedCard[2], x = rddist, y = 425, rotation = math.random(-15, 15) / 100})
-    updatePlayerVal()
+local function resetGame()
+    deck = createDeck()
+    dealerHand = {}
+    playerHand = {}
+    dealerValue = 0
+    playerValue = 0
+    playerStand = false
+    dealerFaceDown = true
+    gameResult = nil
+    actionLog=''
+    dealInitialCards()
 end
 
--- Load background image
-local bgimg = love.graphics.newImage('assets/backgrounds/table.jpg')
+bgimg = love.graphics.newImage('assets/backgrounds/table.jpg')
+resetGame()
+checkPlayerStatus()
+
 
 function game:load()
-    -- Initialize game state if needed
+    
 end
 
 function game:update(dt)
-    -- Update game state if needed
+    if playerStand and not gameResult then
+        dealerPlay()
+    end
 end
 
 function game:draw()
-    -- Draw background
-    love.graphics.draw(bgimg, 0, 0, 0, 1, 1)
-    -- Draw dealer hand value
-    love.graphics.print("Dealer's Hand Value: " .. dealerVal, 10, 10)
-    -- Draw player hand value
-    love.graphics.print("Player's Hand Value: " .. playerVal, 10, 300)
-    -- Draw player cards
-    for _, card in ipairs(pHand) do
-        love.graphics.draw(
-            love.graphics.newImage('assets/cards/' .. card.card .. '.png'),
-            card.x,
-            card.y,
-            card.rotation,
-            0.2,
-            0.2,
-            250, 363
-        )
+    love.graphics.draw(bgimg, 0, 0)
+
+    love.graphics.print("Dealer's Hand: "..dealerValue, 10, 10)
+    for i, card in ipairs(dealerHand) do
+        if i == 1 and dealerFaceDown then
+            love.graphics.draw(faceDownCard, 50 + (i-1) * 80, 100, card.rotation, 0.2, 0.2, 100, 145.2)
+        else
+            love.graphics.draw(love.graphics.newImage('assets/cards/' .. card.name .. '.png'),50 + (i-1) * 80,100,card.rotation,0.2,0.2,100, 145.2)
+        end
+    end
+
+    love.graphics.print("Player's Hand: ".. playerValue, 10, 300)
+    for i, card in ipairs(playerHand) do
+        love.graphics.draw(love.graphics.newImage('assets/cards/' .. card.name .. '.png'),50 + (i-1) * 80,380,card.rotation,0.2,0.2,100, 145.2)
+    end
+
+    if gameResult then
+        love.graphics.print(gameResult .. "\nPress ESC to go back to the menu! Press R to restart!", 10, 540)
+    else
+        love.graphics.printf(actionLog, 400, 550,50,'center')
     end
 end
 
 function game:keypressed(key)
-    if key == 'h' then
-        dhit()
-        print("hit:", pHand[#pHand].card)
-    end
-    if key == 's' then
-        -- Stand logic here
+    if key == 'h' and not playerStand then
+        table.insert(playerHand, pickRandomCard(deck))
+        playerValue = calculateHandValue(playerHand)
+        actionLog='Hit!'
+        checkPlayerStatus()
+    elseif key == 's' and not playerStand then
+        playerStand = true
+    elseif key == 'escape' then
+        resetGame()
+        currentState = menu
+    elseif key == 'r' then
+        resetGame()
     end
 end
-
--- Clean up
-print(collectgarbage("count"))
-collectgarbage("collect")
 
 return game

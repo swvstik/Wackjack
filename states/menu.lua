@@ -3,6 +3,7 @@ local menu={}
 local li={'play','options','exit'}
 local current=1
 
+
 function menu:load()
 
 end
@@ -11,9 +12,10 @@ function menu:update(dt)
 
 end
 
+local Hollirood = love.graphics.newFont('assets/fonts/Hollirood.ttf', 48)
+
 function menu:draw()
-    local gmnm = 'wackjack'
-    local Hollirood = love.graphics.newFont('assets/fonts/Hollirood.ttf', 48)      
+    local gmnm = 'wackjack'    
     love.graphics.setFont(Hollirood)
     love.graphics.printf(gmnm,  (love.graphics.getWidth() - Hollirood:getWidth(gmnm)) / 2, (love.graphics.getHeight() - Hollirood:getHeight(gmnm)) / 3,Hollirood:getWidth(gmnm), 'center')
 
@@ -60,6 +62,4 @@ function menu:keypressed(key)
     end
 end
 
-print(collectgarbage("count"))
-collectgarbage("collect")
 return menu
