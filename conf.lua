@@ -7,5 +7,5 @@ function love.conf(t)
     -- game details
     t.title = 'wackjack'
     t.version = '11.0'
-    t.console=true
+    t.console=false
 end
