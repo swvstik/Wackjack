@@ -29,7 +29,6 @@ function menu:draw()
             love.graphics.print(v, w / 2 - 30, (h - #li * 30) / 2 + (i - 1) * 30)
         end
     end
-    print("Current index: " .. current)
     love.graphics.setColor(1, 1, 1)
 end
 
