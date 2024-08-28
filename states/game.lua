@@ -12,20 +12,24 @@ for i = 1, #rank do
     end
 end
 
-sel = nil
+function pickrandom(cardset)
+    return cardset[math.random(#cardset)]
+end
 
+local pick=pickrandom(cardset)
+print(pick)
 
--- function pickrandom(cardset)
---     local rindex = math.random(#cardset)
---     return cardset[rindex]
--- end
+local rdaxis = -0.15
+local rddist = 125
+local dealerHand = 0
+
 
 for i=1, #cardset do
-    print(cardset[i])
+    --print(cardset[i])
 end
 
 function game:load()
-
+    
 end
 
 function game:update(dt)
@@ -33,12 +37,19 @@ function game:update(dt)
 end
 
 function game:draw()
-    love.graphics.draw(love.graphics.newImage('assets/cards/' .. sel .. '.png'),0,0)
-    print(sel)
+    -- draw bg
+    love.graphics.draw(love.graphics.newImage('assets/backgrounds/table.jpg'),0,0,0,1,1)
+    love.graphics.print("Dealer's Hand:" .. dealerHand, 10, 10)
+    love.graphics.draw(love.graphics.newImage('assets/cards/' .. pick .. '.png'),rddist,125,rdaxis,0.2,0.2,250,363)
 end
 
 function game:keypressed(key)
-
+    if key=='h' then
+        pick=pickrandom(cardset)
+        rdaxis=rdaxis+0.15
+        rddist=rddist+50
+        print("hit:",pick)
+    end
 end
 
 return game
