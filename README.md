@@ -4,5 +4,7 @@
 
 #### The game starts with a player and a dealer. The player is dealt two cards, and the dealer is dealt one card. The player can choose to hit or stand. If the player's total is over 21, they lose. If the player stands, the dealer draws cards until their total is 17 or higher. The player with the highest total without going over 21 wins.
 
+###### TUTORIAL: arrow-keys to navigate menu and options, 'h' to hit and 's' to stand in-game, 'esc' to return to menu, 'r' to restart the game.
+
 currently in development -
 all assets belong to their respective creators
