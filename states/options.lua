@@ -100,9 +100,9 @@ end
 
 function options:updateSFXVolume()
     local sfmul = (sfxState == 'on') and 1 or 0
-    sfxVol = sfmul * sfxVol
+    sfxVol2 = sfmul * sfxVol
     for _, source in pairs(sfx) do
-        source:setVolume(sfxVol)
+        source:setVolume(sfxVol2)
     end
 end
 
