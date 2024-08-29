@@ -1,8 +1,6 @@
 local options = {}
 
 local li = {'sound effects: ', 'sfx volume: ', 'background music:', 'bgm volume: ', 'back to menu'}
--- local sfxState, bgmState = 'on', 'on'
--- local sfxVol, bgmVol = 100, 100
 local current = 1
 
 function options:load()
@@ -24,11 +22,11 @@ function options:draw()
         if i == 1 then
             text = v .. (sfxState == 'on' and ' on' or ' off')
         elseif i == 2 then
-            text = v .. (sfxVol*100)
+            text = v .. (sfxVol * 100)
         elseif i == 3 then
             text = v .. (bgmState == 'on' and ' on' or ' off')
         elseif i == 4 then
-            text = v .. (bgmVol*100)
+            text = v .. (bgmVol * 100)
         else
             text = v
         end
@@ -45,7 +43,7 @@ function options:draw()
 end
 
 function options:keypressed(key)
-    if key=='down' or key=='up' or key=='left' or key=='right' then
+    if key == 'down' or key == 'up' or key == 'left' or key == 'right' then
         love.audio.play(sfx.scr)
     end
 
@@ -62,41 +60,49 @@ function options:keypressed(key)
         self:adjustOption(1)
     elseif key == 'return' then
         if current == #li then
-
             love.graphics.clear()
-            currentState=menu
+            currentState = menu
             love.audio.play(sfx.sel)
             print("Returning to main menu...")
-
         end
+    end
+    if key == 'escape' then
+        love.graphics.clear()
+        currentState = menu
     end
 end
 
 function options:adjustOption(direction)
     if current == 1 then
         sfxState = (sfxState == 'on') and 'off' or 'on'
+        self:updateSFXVolume()
     elseif current == 2 then
         sfxVol = math.max(0, math.min(1, sfxVol + (direction * 0.1)))
-
+        self:updateSFXVolume()
     elseif current == 3 then
         bgmState = (bgmState == 'on') and 'off' or 'on'
+        if bgmState == 'off' then
+            bgm:stop()
+        else
+            bgm:setVolume(bgmVol)
+            if not bgm:isPlaying() then
+                love.audio.play(bgm)
+            end
+        end
     elseif current == 4 then
         bgmVol = math.max(0, math.min(1, bgmVol + (direction * 0.1)))
+        if bgmState == 'on' then
+            bgm:setVolume(bgmVol)
+        end
+    end
+end
 
-    end
-    local sfmul = 0
-    if sfxState == 'on' then
-        sfmul=1
-    else
-        sfmul=0
-    end
-    sfx.scr:setVolume(sfmul*sfxVol)
-    sfx.sel:setVolume(sfmul*sfxVol)
-    if bgmState == 'on' then
-        bgm:play()
-        bgm:setVolume(bgmVol)
-    else
-        bgm:stop()
+
+function options:updateSFXVolume()
+    local sfmul = (sfxState == 'on') and 1 or 0
+    sfxVol = sfmul * sfxVol
+    for _, source in pairs(sfx) do
+        source:setVolume(sfxVol)
     end
 end
 

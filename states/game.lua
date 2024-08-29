@@ -68,19 +68,24 @@ local function dealerPlay()
     end
     if dealerValue > 21 or dealerValue < playerValue then
         gameResult = "Player Wins!"
+        love.audio.play(sfx.win)
     elseif dealerValue > playerValue then
         gameResult = "Dealer Wins!"
+        love.audio.play(sfx.lose)
     else
         gameResult = "Draw!"
+        love.audio.play(sfx.tie)
     end
 end
 
 local function checkPlayerStatus()
     if playerValue > 21 then
         gameResult = "Player Busts! Dealer Wins!"
+        love.audio.play(sfx.lose)
         playerStand = true
     elseif playerValue == 21 then
         gameResult = "Blackjack! Player Wins!"
+        love.audio.play(sfx.win)
         playerStand = true
     end
 end

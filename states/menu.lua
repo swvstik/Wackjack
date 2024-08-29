@@ -1,6 +1,6 @@
 local menu={}
 
-local li={'play','options','exit'}
+local li={'play','options','tutorial','exit'}
 local current=1
 
 
@@ -13,11 +13,11 @@ function menu:update(dt)
 end
 
 local Hollirood = love.graphics.newFont('assets/fonts/Hollirood.ttf', 48)
+local gmnm = 'wackjack' 
 
-function menu:draw()
-    local gmnm = 'wackjack'    
+function menu:draw()   
     love.graphics.setFont(Hollirood)
-    love.graphics.printf(gmnm,  (love.graphics.getWidth() - Hollirood:getWidth(gmnm)) / 2, (love.graphics.getHeight() - Hollirood:getHeight(gmnm)) / 3,Hollirood:getWidth(gmnm), 'center')
+    love.graphics.printf(gmnm,  (love.graphics.getWidth() - Hollirood:getWidth(gmnm)) / 2, (love.graphics.getHeight() - Hollirood:getHeight(gmnm)) / 3.5,Hollirood:getWidth(gmnm), 'center')
 
     local w, h = love.graphics.getDimensions()
     love.graphics.setFont(love.graphics.newFont(20))
@@ -35,27 +35,28 @@ function menu:draw()
 end
 
 function menu:keypressed(key)
-    if key == 'down' or key=='up' then
+    if key == 'down' or key=='up' or key=='w' or key=='s' then
         love.audio.play(sfx.scr)
-    elseif key == 'return' then
+    elseif key == 'return' or key=='space' then
         love.audio.play(sfx.sel)
     end
-    if key=='down' then
+    if key=='down' or key=='s' then
         current = (current % #li) + 1
-    elseif key=='up' then
+    elseif key=='up' or key=='w' then
         current = current - 1
         if current < 1 then
             current = #li
         end
-    elseif key=='return' then
+    elseif key=='return' or key=='space' then
         if current==3 then
+            love.graphics.clear()
+            currentState=tutorial
+        elseif current==4 then
             love.event.quit()
-        end
-        if current==2 then
+        elseif current==2 then
             love.graphics.clear()
             currentState=options
-        end
-        if current==1 then
+        elseif current==1 then
             love.graphics.clear()
             currentState=game
         end

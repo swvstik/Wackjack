@@ -2,6 +2,7 @@
 menu = require("states.menu")
 options = require("states.options")
 game = require("states.game")
+tutorial = require("states.tutorial")
 currentState = menu
 
 sfxState, bgmState = 'on', 'on'
@@ -16,10 +17,16 @@ function love.load()
     love.audio.play(bgm)
     sfx = {
         scr=love.audio.newSource('assets/sfx/menuindex.wav','static'),
-        sel=love.audio.newSource('assets/sfx/menuselect.wav','static')
+        sel=love.audio.newSource('assets/sfx/menuselect.wav','stream'),
+        win=love.audio.newSource('assets/sfx/you_win.ogg','static'),
+        lose=love.audio.newSource('assets/sfx/you_lose.ogg','static'),
+        tie=love.audio.newSource('assets/sfx/its_a_tie.ogg','static'),
+        hit=love.audio.newSource('assets/sfx/hit.ogg','static'),
+        stand=love.audio.newSource('assets/sfx/stand.ogg','static')
     }
-    sfx.scr:setVolume(sfxVol)
-    sfx.sel:setVolume(sfxVol)
+    -- for _, source in pairs(sfx) do
+    --     source:setVolume(sfxVol)
+    -- end
     currentState:load()
 end
 
@@ -36,6 +43,10 @@ function love.draw()
 end
 
 function love.keypressed(key)
+    if key=='escape' then
+        sfx.sel:play()
+        love.graphics.clear()
+    end
     if currentState.keypressed then
         currentState:keypressed(key)
     end
